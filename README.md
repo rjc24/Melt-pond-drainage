@@ -23,3 +23,6 @@ The files provided in this repository are sufficient to calculate approximate so
 - **newton_functions.py**: Contains functions used to construct the Jacobian matrix for Newton's method. The Jacobian is currently based only on the diffusive terms of the heat/solute conservation equations. Improved perfomance could likely be obtained if the advective terms were accounted for as well. Called by **NL_solve.py**.
 - **upwind.py**: Contains the function for calculating temperature and liquid concentration values at cell faces using a MUSCL-style limiter. Called by **NL_solve.py**.
 - **t_int.py**: Linearly interpolates data in time to obtain fields at a user-specified snap shot. Called by **Data_call.py**.
+- **interface.py**: Calculates approximate interface positions located at horizontal cell faces between liquid and mush cells. Improved interface positions can be calculated _a poteriori_ using quadratic extrapolation. Called by **Data_call.py**.
+- **phys_params.py**: Contains parameters derived from physical quantities. Called by various.
+- **num_params.py**: Contains parameters relating to the numerical implementation. Called by various.
