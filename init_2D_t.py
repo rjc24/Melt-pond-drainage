@@ -12,7 +12,9 @@ import phys_params as ppar
 import num_params as npar
 from vertical_profile import F_z, dF_z, dF_zdz
 from interface import int_loc
-    
+
+# example initial conditions (channel with tributaries)
+
 def init(run_enter = None, St = None, Cr = None, Pe = None, Da_h = None, 
          T_p = None, C_p = None, AR = None, Nz = None, j = None, a_0_t = None, 
          a_len = None, p_an = None, i_pos = None, BC_T = None, BC_p = None, 
