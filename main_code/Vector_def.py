@@ -97,7 +97,7 @@ def b_theta(method, HH_0, HH, phi_0, phi, xx, xin, zz, zin, dt,
                                      1 - phi_B, 1 - phi_T
 
     # Neumann conditions
-    # enthalpy / salinity fluxes
+    # enthalpy fluxes
     FF_L0, FF_R0, FF_B0, FF_T0 = FF_0[0], FF_0[1], FF_0[2], FF_0[3]
     FF_L, FF_R, FF_B, FF_T = FF[0], FF[1], FF[2], FF[3]
     # solid fraction fluxes
@@ -144,29 +144,33 @@ def b_theta(method, HH_0, HH, phi_0, phi, xx, xin, zz, zin, dt,
     dHdz[:, 1:-1] = (HH[:, 1:]/cc_p[:, 1:] - HH[:, :-1]/cc_p[:, :-1])/\
                     (zin[:, 1:] - zin[:, :-1])
 
-    dHdr_0[0, :] = alp_L*(-8*HH_L0[:]/cc_pL0[:] + \
-        9*HH_0[0, :]/cc_p0[0, :] - HH_0[1, :]/cc_p0[1, :])/\
-        (6*(xin[0, :] - xx[0, :])) + (1 - alp_L)*FF_L0[:]
-    dHdr[0, :] = -alp_L*8*HH_L[:]/cc_pL[:]/(6*(xin[0, :] - xx[0, :])) + \
-        (1 - alp_L)*FF_L[:]
+    if np.all(FF_L0) == 0:
+        dHdr_0[0, :] = alp_L*(-8*HH_L0[:]/cc_pL0[:] + \
+            9*HH_0[0, :]/cc_p0[0, :] - HH_0[1, :]/cc_p0[1, :])/\
+            (6*(xin[0, :] - xx[0, :])) + (1 - alp_L)*FF_L0[:]
+        dHdr[0, :] = -alp_L*8*HH_L[:]/cc_pL[:]/(6*(xin[0, :] - xx[0, :])) + \
+            (1 - alp_L)*FF_L[:]
 
-    dHdr_0[-1, :] = alp_R*(8*HH_R0[:]/cc_pR0[:] - \
-        9*HH_0[-1, :]/cc_p0[-1, :] + HH_0[-2, :]/cc_p0[-2, :])/\
-        (6*(xx[-1, :] - xin[-1, :])) + (1 - alp_R)*FF_R0[:]
-    dHdr[-1, :] = alp_R*8*HH_R[:]/cc_pR[:]/(6*(xx[-1, :] - xin[-1, :])) + \
-        (1 - alp_R)*FF_R[:]
+    if np.all(FF_R0) == 0:
+        dHdr_0[-1, :] = alp_R*(8*HH_R0[:]/cc_pR0[:] - \
+            9*HH_0[-1, :]/cc_p0[-1, :] + HH_0[-2, :]/cc_p0[-2, :])/\
+            (6*(xx[-1, :] - xin[-1, :])) + (1 - alp_R)*FF_R0[:]
+        dHdr[-1, :] = alp_R*8*HH_R[:]/cc_pR[:]/(6*(xx[-1, :] - xin[-1, :])) + \
+            (1 - alp_R)*FF_R[:]
 
-    dHdz_0[:, 0] = alp_B*(-8*HH_B0[:]/cc_pB0[:] + \
-        9*HH_0[:, 0]/cc_p0[:, 0] - HH_0[:, 1]/cc_p0[:, 1])/\
-        (6*(zin[:, 0] - zz[:, 0])) + (1 - alp_B)*FF_B0[:]
-    dHdz[:, 0] = -alp_B*8*HH_B[:]/cc_pB[:]/(6*(zin[:, 0] - zz[:, 0])) + \
-        (1 - alp_B)*FF_B[:]
+    if np.all(FF_B0) == 0:
+        dHdz_0[:, 0] = alp_B*(-8*HH_B0[:]/cc_pB0[:] + \
+            9*HH_0[:, 0]/cc_p0[:, 0] - HH_0[:, 1]/cc_p0[:, 1])/\
+            (6*(zin[:, 0] - zz[:, 0])) + (1 - alp_B)*FF_B0[:]
+        dHdz[:, 0] = -alp_B*8*HH_B[:]/cc_pB[:]/(6*(zin[:, 0] - zz[:, 0])) + \
+            (1 - alp_B)*FF_B[:]
 
-    dHdz_0[:, -1] = alp_T*(8*HH_T0[:]/cc_pT0[:] - \
-        9*HH_0[:, -1]/cc_p0[:, -1] + HH_0[:, -2]/cc_p0[:, -2])/\
-        (6*(zz[:, -1] - zin[:, -1])) + (1 - alp_T)*FF_T0[:]
-    dHdz[:, -1] = alp_T*8*HH_T[:]/cc_pT[:]/(6*(zz[:, -1] - zin[:, -1])) + \
-        (1 - alp_T)*FF_T[:]
+    if np.all(FF_T0) == 0:
+        dHdz_0[:, -1] = alp_T*(8*HH_T0[:]/cc_pT0[:] - \
+            9*HH_0[:, -1]/cc_p0[:, -1] + HH_0[:, -2]/cc_p0[:, -2])/\
+            (6*(zz[:, -1] - zin[:, -1])) + (1 - alp_T)*FF_T0[:]
+        dHdz[:, -1] = alp_T*8*HH_T[:]/cc_pT[:]/(6*(zz[:, -1] - zin[:, -1])) + \
+            (1 - alp_T)*FF_T[:]
 
 
     # compiling diffusion terms
@@ -203,6 +207,7 @@ def b_theta(method, HH_0, HH, phi_0, phi, xx, xin, zz, zin, dt,
 #=========================== solid fraction terms ============================
 
     if EQN == 1:
+#        lam = (St + (c_p - 1)*Cr)
         lam = St
     elif EQN == 2:
         lam = -Cr
@@ -222,33 +227,37 @@ def b_theta(method, HH_0, HH, phi_0, phi, xx, xin, zz, zin, dt,
                       (zin[:, 1:] - zin[:, :-1])
 
 
-    dphidr_0[0, :] = alp_L*(-8*phi_L0[:]/cc_pL0[:] + \
-        9*phi_0[0, :]/cc_p0[0, :] - phi_0[1, :]/cc_p0[1, :])/\
-        (6*(xin[0, :] - xx[0, :])) + (1 - alp_L)*FF_phi_L0[:]
-    dphidr[0, :] = alp_L*(-8*phi_L[:]/cc_pL[:] + \
-        9*phi[0, :]/cc_p[0, :] - phi[1, :]/cc_p[1, :])/\
-        (6*(xin[0, :] - xx[0, :])) + (1 - alp_L)*FF_phi_L[:]
+    if np.all(FF_phi_L0) == 0:
+        dphidr_0[0, :] = alp_L*(-8*phi_L0[:]/cc_pL0[:] + \
+            9*phi_0[0, :]/cc_p0[0, :] - phi_0[1, :]/cc_p0[1, :])/\
+            (6*(xin[0, :] - xx[0, :])) + (1 - alp_L)*FF_phi_L0[:]
+        dphidr[0, :] = alp_L*(-8*phi_L[:]/cc_pL[:] + \
+            9*phi[0, :]/cc_p[0, :] - phi[1, :]/cc_p[1, :])/\
+            (6*(xin[0, :] - xx[0, :])) + (1 - alp_L)*FF_phi_L[:]
 
-    dphidr_0[-1, :] = alp_R*(8*phi_R0[:]/cc_pR0[:] - \
-        9*phi_0[-1, :]/cc_p0[-1, :] + phi_0[-2, :]/cc_p0[-2, :])/\
-        (6*(xx[-1, :] - xin[-1, :])) + (1 - alp_R)*FF_phi_R0[:]
-    dphidr[-1, :] = alp_R*(8*phi_R[:]/cc_pR[:] - \
-        9*phi[-1, :]/cc_p[-1, :] + phi[-2, :]/cc_p[-2, :])/\
-        (6*(xx[-1, :] - xin[-1, :])) + (1 - alp_R)*FF_phi_R[:]
+    if np.all(FF_phi_R0) == 0:
+        dphidr_0[-1, :] = alp_R*(8*phi_R0[:]/cc_pR0[:] - \
+            9*phi_0[-1, :]/cc_p0[-1, :] + phi_0[-2, :]/cc_p0[-2, :])/\
+            (6*(xx[-1, :] - xin[-1, :])) + (1 - alp_R)*FF_phi_R0[:]
+        dphidr[-1, :] = alp_R*(8*phi_R[:]/cc_pR[:] - \
+            9*phi[-1, :]/cc_p[-1, :] + phi[-2, :]/cc_p[-2, :])/\
+            (6*(xx[-1, :] - xin[-1, :])) + (1 - alp_R)*FF_phi_R[:]
 
-    dphidz_0[:, 0] = alp_B*(-8*phi_B0[:]/cc_pB0[:] + \
-        9*phi_0[:, 0]/cc_p0[:, 0] - phi_0[:, 1]/cc_p0[:, 1])/\
-        (6*(zin[:, 0] - zz[:, 0])) + (1 - alp_B)*FF_phi_B0[:]
-    dphidz[:, 0] = alp_B*(-8*phi_B[:]/cc_pB[:] + \
-        9*phi[:, 0]/cc_p[:, 0] - phi[:, 1]/cc_p[:, 1])/\
-        (6*(zin[:, 0] - zz[:, 0])) + (1 - alp_B)*FF_phi_B[:]
+    if np.all(FF_phi_B0) == 0:
+        dphidz_0[:, 0] = alp_B*(-8*phi_B0[:]/cc_pB0[:] + \
+            9*phi_0[:, 0]/cc_p0[:, 0] - phi_0[:, 1]/cc_p0[:, 1])/\
+            (6*(zin[:, 0] - zz[:, 0])) + (1 - alp_B)*FF_phi_B0[:]
+        dphidz[:, 0] = alp_B*(-8*phi_B[:]/cc_pB[:] + \
+            9*phi[:, 0]/cc_p[:, 0] - phi[:, 1]/cc_p[:, 1])/\
+            (6*(zin[:, 0] - zz[:, 0])) + (1 - alp_B)*FF_phi_B[:]
 
-    dphidz_0[:, -1] = alp_T*(8*phi_T0[:]/cc_pT0[:] - \
-        9*phi_0[:, -1]/cc_p0[:, -1] + phi_0[:, -2]/cc_p0[:, -2])/\
-        (6*(zz[:, -1] - zin[:, -1])) + (1 - alp_T)*FF_phi_T0[:]
-    dphidz[:, -1] = alp_T*(8*phi_T[:]/cc_pT[:] - \
-        9*phi[:, -1]/cc_p[:, -1] + phi[:, -2]/cc_p[:, -2])/\
-        (6*(zz[:, -1] - zin[:, -1])) + (1 - alp_T)*FF_phi_T[:]
+    if np.all(FF_phi_T0) == 0:
+        dphidz_0[:, -1] = alp_T*(8*phi_T0[:]/cc_pT0[:] - \
+            9*phi_0[:, -1]/cc_p0[:, -1] + phi_0[:, -2]/cc_p0[:, -2])/\
+            (6*(zz[:, -1] - zin[:, -1])) + (1 - alp_T)*FF_phi_T0[:]
+        dphidz[:, -1] = alp_T*(8*phi_T[:]/cc_pT[:] - \
+            9*phi[:, -1]/cc_p[:, -1] + phi[:, -2]/cc_p[:, -2])/\
+            (6*(zz[:, -1] - zin[:, -1])) + (1 - alp_T)*FF_phi_T[:]
 
     # compiling diffusion terms
 
@@ -283,29 +292,33 @@ def b_theta(method, HH_0, HH, phi_0, phi, xx, xin, zz, zin, dt,
         dCdz[:, 1:-1] = (HH[:, 1:] - HH[:, :-1])/\
                         (zin[:, 1:] - zin[:, :-1])
     
-        dCdr_0[0, :] = alp_L*(-8*HH_L0[:] + \
-            9*HH_0[0, :] - HH_0[1, :])/\
-            (6*(xin[0, :] - xx[0, :])) + (1 - alp_L)*FF_L0[:]
-        dCdr[0, :] = -alp_L*8*HH_L[:]/(6*(xin[0, :] - xx[0, :])) + \
-            (1 - alp_L)*FF_L[:]
+        if np.all(FF_L0) == 0:
+            dCdr_0[0, :] = alp_L*(-8*HH_L0[:] + \
+                9*HH_0[0, :] - HH_0[1, :])/\
+                (6*(xin[0, :] - xx[0, :])) + (1 - alp_L)*FF_L0[:]
+            dCdr[0, :] = -alp_L*8*HH_L[:]/(6*(xin[0, :] - xx[0, :])) + \
+                (1 - alp_L)*FF_L[:]
     
-        dCdr_0[-1, :] = alp_R*(8*HH_R0[:] - \
-            9*HH_0[-1, :] + HH_0[-2, :])/\
-            (6*(xx[-1, :] - xin[-1, :])) + (1 - alp_R)*FF_R0[:]
-        dCdr[-1, :] = alp_R*8*HH_R[:]/(6*(xx[-1, :] - xin[-1, :])) + \
-            (1 - alp_R)*FF_R[:]
+        if np.all(FF_R0) == 0:
+            dCdr_0[-1, :] = alp_R*(8*HH_R0[:] - \
+                9*HH_0[-1, :] + HH_0[-2, :])/\
+                (6*(xx[-1, :] - xin[-1, :])) + (1 - alp_R)*FF_R0[:]
+            dCdr[-1, :] = alp_R*8*HH_R[:]/(6*(xx[-1, :] - xin[-1, :])) + \
+                (1 - alp_R)*FF_R[:]
     
-        dCdz_0[:, 0] = alp_B*(-8*HH_B0[:] + \
-            9*HH_0[:, 0] - HH_0[:, 1])/\
-            (6*(zin[:, 0] - zz[:, 0])) + (1 - alp_B)*FF_B0[:]
-        dCdz[:, 0] = -alp_B*8*HH_B[:]/(6*(zin[:, 0] - zz[:, 0])) + \
-            (1 - alp_B)*FF_B[:]
+        if np.all(FF_B0) == 0:
+            dCdz_0[:, 0] = alp_B*(-8*HH_B0[:] + \
+                9*HH_0[:, 0] - HH_0[:, 1])/\
+                (6*(zin[:, 0] - zz[:, 0])) + (1 - alp_B)*FF_B0[:]
+            dCdz[:, 0] = -alp_B*8*HH_B[:]/(6*(zin[:, 0] - zz[:, 0])) + \
+                (1 - alp_B)*FF_B[:]
     
-        dCdz_0[:, -1] = alp_T*(8*HH_T0[:] - \
-            9*HH_0[:, -1] + HH_0[:, -2])/\
-            (6*(zz[:, -1] - zin[:, -1])) + (1 - alp_T)*FF_T0[:]
-        dCdz[:, -1] = alp_T*8*HH_T[:]/(6*(zz[:, -1] - zin[:, -1])) + \
-            (1 - alp_T)*FF_T[:]
+        if np.all(FF_T0) == 0:
+            dCdz_0[:, -1] = alp_T*(8*HH_T0[:] - \
+                9*HH_0[:, -1] + HH_0[:, -2])/\
+                (6*(zz[:, -1] - zin[:, -1])) + (1 - alp_T)*FF_T0[:]
+            dCdz[:, -1] = alp_T*8*HH_T[:]/(6*(zz[:, -1] - zin[:, -1])) + \
+                (1 - alp_T)*FF_T[:]
     
         n_diffus_p[:, :] = (1 - theta)*dt*((xx[1:, :] - xx[:-1, :])*(D_n*dCdz_0[:, 1:] - \
             D_n*dCdz_0[:, :-1]) + (zz[:, 1:] - zz[:, :-1])*\
