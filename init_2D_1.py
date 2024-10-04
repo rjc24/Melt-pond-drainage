@@ -334,7 +334,8 @@ def init(run_enter = None, St = None, Cr = None, Pe = None, Da_h = None,
     # Numerical parameters
     xi = 0.3   # parameter for CFL condition
     dx, dz = xx[1, 0] - xx[0, 0], zz[0, 1] - zz[0, 0]   # grid spacing
-    dt_max = 1e-4*xi/(np.max(abs(u_b))/dx + np.max(abs(w_b))/dz)   # max time step
+    dt_max = xi/(np.max(abs(u_b))/dx + np.max(abs(w_b))/dz)   # max time step
+    dt_max = 1e-4*dt_max   # starting with small time step size
     dt_0 = dt_max   # time step
     D_n = npar.omeg*dx**2   # numerical diffusivity
     
