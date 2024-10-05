@@ -38,7 +38,12 @@ The files provided in this repository are sufficient to calculate approximate so
 - **colormaps.py**: colour maps used for visualisation of the solutions
 - **streamfunction.py**: Calculates the streamfunction from the solid fraction and pressure fields at a given time. This function is not used in the main code and is included for visualisation of the solutions.
 
+## fixed_salinity
+- **NL_solve.py**: An alternative version of NL_solve.py where the bulk salinity is fixed (i.e. does not evolve in time).
+- **init_2D_1.py**: An alternative version of init_2D_1.py for fixed-salinity runs (differs in that the pond salinity is constant and equal to the bulk salinity of the ice). To generate fixed-salinity solutions, replace **NL_solve.py** and **init_2D_1.py** from the **main_code** directory with the files from the **fixed_salinity** directory. 
+
 # Notes
 Before using the code, the user should make themselves aware of the following:
 - For numerical convenience, the salinity in the code is actually the _negative_ salinity. In our nondimensionalisation, the minimum salinity is _-Cr_ (the negative concentration ratio), meaning that in the code, the maximum salinity is _Cr_.
 - If simulating the drainage of very fresh melt water (i.e. with salinity close to _-Cr_ or, in the code, _Cr_), the liquid will likely become constitutionally supercooled near mush-liquid interfaces. Due to the marginal equilibrium condition underpinning the enthalpy method used in the code, this results in the formation of solid fraction spikes which can cause the numerical method to become unstable. For this reason, the solute-conservation equation is solved with a small numerical diffusion term. The numerical diffusivity is based on the grid resolution and can be modified in the **num_params.py** file. Depending on the pond salinity, Peclet number and the boundary conditions being used, a larger numerical diffusivity may be required.
+- The code currently only supports Dirichlet boundary conditions and _homogeneous_ Neumann boundary conditions on temperature and bulk salinity. If using _inhomogeneous_ Neumann conditions, the **Vector_def.py** file will have to be amended.
