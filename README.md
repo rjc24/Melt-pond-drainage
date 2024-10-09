@@ -47,3 +47,11 @@ Before using the code, the user should make themselves aware of the following:
 - For numerical convenience, the salinity in the code is actually the _negative_ salinity. In our nondimensionalisation, the minimum salinity is _-Cr_ (the negative concentration ratio), meaning that in the code, the maximum salinity is _Cr_.
 - If simulating the drainage of very fresh melt water (i.e. with salinity close to _-Cr_ or, in the code, _Cr_), the liquid will likely become constitutionally supercooled near mush-liquid interfaces. Due to the marginal equilibrium condition underpinning the enthalpy method used in the code, this results in the formation of solid fraction spikes which can cause the numerical method to become unstable. For this reason, the solute-conservation equation is solved with a small numerical diffusion term. The numerical diffusivity is based on the grid resolution and can be modified in the **num_params.py** file. Depending on the pond salinity, Peclet number and the boundary conditions being used, a larger numerical diffusivity may be required.
 - The code currently only supports Dirichlet boundary conditions and _homogeneous_ Neumann boundary conditions on temperature and bulk salinity. If using _inhomogeneous_ Neumann conditions, the **Vector_def.py** file will have to be amended.
+
+
+# 1D code
+In the **1D** directory is the code for four variants of the simplified 1D model. Advection is neglected in the ice and the effects of advective thermal and solutal transport in the channel are approximated using the following series of parameterisations:
+- **par_A : constant-_Q_T_**: Thermal advective transport is parameterised as a constant (_Q_T_).
+- **par_B : constant-_Pe_**: Thermal advective transport is parameterised as the product of a constant Peclet number (_Pe_) and a temperature difference dependent on the pond temperature (_T_p - T_).
+- **par_C : _a_-dependent**: Thermal and solutal advective transport are parameterised as the product of a channel radius-dependent Peclet number (_Pe(a)_) and a temperature difference dependent on the pond temperature / salinity (_T_p - T_ and _C_p - C_, respectively).
+Only fixed-salinity versions of the code for the first two parameterisations are included. Both fixed- and variable-salinity versions of the code for the final parameterisation are included.
