@@ -55,3 +55,4 @@ In the **1D** directory is the code for four variants of the simplified 1D model
 - **par_B : constant-_Pe_**: Thermal advective transport is parameterised as the product of a constant Peclet number (_Pe_) and a temperature difference dependent on the pond temperature (_T_p - T_).
 - **par_C : _a_-dependent**: Thermal and solutal advective transport are parameterised as the product of a channel radius-dependent Peclet number (_Pe(a)_) and a temperature difference dependent on the pond temperature / salinity (_T_p - T_ and _C_p - C_, respectively).
 Only fixed-salinity versions of the code for the first two parameterisations are included. Both fixed- and variable-salinity versions of the code for the final parameterisation are included.
+The files in the **1D** directory share names with their 2D counterparts and are used in the same way.
