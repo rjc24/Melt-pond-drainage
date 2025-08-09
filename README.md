@@ -1,6 +1,6 @@
 # Melt pond drainage
 
-A finite-volume code for simulating the time evolution of the sea-ice interior during melt-pond drainage. The ice is modelled as a mushy layer, meaning that the code can be easily adapted to other problems involving sea ice and mushy layers. The code is written exclusively in Python 3.x, using numpy 1.x and scipy 1.x. Details of the numerical method are presented in Campbell 2024 (not yet publicly available).
+A finite-volume code for simulating the time evolution of the sea-ice interior during melt-pond drainage. The ice is modelled as a mushy layer, meaning that the code can be easily adapted to other problems involving sea ice and mushy layers. The code is written exclusively in Python 3.x, using numpy 1.x and scipy 1.x. Details of the numerical method are presented in Campbell 2025 (https://doi.org/10.17630/sta/1309).
 
 # Using the code
 To use the code, simply follow these steps:
